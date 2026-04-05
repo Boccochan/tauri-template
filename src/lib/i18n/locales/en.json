@@ -10,7 +10,9 @@
     "logosHint": "Click on the Tauri, Vite, and SvelteKit logos to learn more.",
     "altVite": "Vite",
     "altTauri": "Tauri",
-    "altSvelteKit": "SvelteKit"
+    "altSvelteKit": "SvelteKit",
+    "demoButton": "Try it",
+    "demoThanks": "Thanks for clicking!"
   },
   "greet": {
     "placeholder": "Enter a name...",

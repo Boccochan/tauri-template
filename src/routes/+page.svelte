@@ -1,7 +1,14 @@
 <script lang="ts">
+  import { Button } from "bits-ui";
   import { _ } from "svelte-i18n";
 
   import { GreetForm } from "$lib/components/greet-form";
+
+  let demoAcknowledged = $state(false);
+
+  function onDemoClick() {
+    demoAcknowledged = true;
+  }
 </script>
 
 <main
@@ -35,6 +42,19 @@
   <p class="mb-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
     {$_("home.logosHint")}
   </p>
+
+  <div class="mb-8 flex flex-col items-center gap-2">
+    <Button.Root
+      type="button"
+      class="cursor-pointer rounded-lg border border-blue-600 bg-blue-600 px-5 py-2.5 font-medium text-white shadow-sm outline-none transition hover:bg-blue-700 active:bg-blue-800 dark:border-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600"
+      onclick={onDemoClick}
+    >
+      {$_("home.demoButton")}
+    </Button.Root>
+    {#if demoAcknowledged}
+      <p class="text-sm text-zinc-700 dark:text-zinc-300">{$_("home.demoThanks")}</p>
+    {/if}
+  </div>
 
   <GreetForm />
 </main>

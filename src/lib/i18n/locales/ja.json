@@ -10,7 +10,9 @@
     "logosHint": "Tauri、Vite、SvelteKit のロゴをクリックして詳細を確認できます。",
     "altVite": "Vite",
     "altTauri": "Tauri",
-    "altSvelteKit": "SvelteKit"
+    "altSvelteKit": "SvelteKit",
+    "demoButton": "試す",
+    "demoThanks": "クリックありがとう！"
   },
   "greet": {
     "placeholder": "名前を入力...",
