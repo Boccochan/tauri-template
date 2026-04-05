@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "title": "Tauri + SvelteKit + TypeScript アプリ"
+  },
+  "language": {
+    "label": "言語"
+  },
+  "home": {
+    "welcome": "Tauri + Svelte へようこそ",
+    "logosHint": "Tauri、Vite、SvelteKit のロゴをクリックして詳細を確認できます。",
+    "altVite": "Vite",
+    "altTauri": "Tauri",
+    "altSvelteKit": "SvelteKit"
+  },
+  "greet": {
+    "placeholder": "名前を入力...",
+    "button": "挨拶",
+    "fallback": "こんにちは、{name}さん！"
+  }
+}

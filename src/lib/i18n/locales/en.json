@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "title": "Tauri + SvelteKit + TypeScript App"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "home": {
+    "welcome": "Welcome to Tauri + Svelte",
+    "logosHint": "Click on the Tauri, Vite, and SvelteKit logos to learn more.",
+    "altVite": "Vite",
+    "altTauri": "Tauri",
+    "altSvelteKit": "SvelteKit"
+  },
+  "greet": {
+    "placeholder": "Enter a name...",
+    "button": "Greet",
+    "fallback": "Hello, {name}!"
+  }
+}

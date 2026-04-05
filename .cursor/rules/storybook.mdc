@@ -1,0 +1,12 @@
+---
+description: How to work with the Storybook config directory (.storybook)
+globs: .storybook/**/*
+alwaysApply: false
+---
+
+# Storybook configuration
+
+- Follow **frontend rules** in `frontend.mdc`. Keep story files under `src/lib/components/<kebab-name>/*.stories.ts`.
+- If you change the `stories` pattern in `main.ts`, verify `src/**/*.stories.*` is still picked up.
+- When adding addons, avoid clashing with the existing `@storybook/sveltekit` setup; verify with `pnpm storybook` / `pnpm build-storybook`.
+- Do not duplicate Vitest integration (`@storybook/addon-vitest`) settings that already live in the root `vite.config.ts`.

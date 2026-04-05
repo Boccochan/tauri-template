@@ -1,0 +1,66 @@
+/// <reference types="vitest/config" />
+
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
+import { sveltekit } from "@sveltejs/kit/vite";
+import tailwindcss from "@tailwindcss/vite";
+import { playwright } from "@vitest/browser-playwright";
+import { defineConfig } from "vite";
+
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const host = process.env.TAURI_DEV_HOST;
+
+export default defineConfig({
+  plugins: [tailwindcss(), sveltekit()],
+  resolve: {
+    conditions: process.env.VITEST ? ["browser"] : undefined,
+  },
+  clearScreen: false,
+  server: {
+    port: 1420,
+    strictPort: true,
+    host: host || false,
+    hmr: host
+      ? {
+          protocol: "ws",
+          host,
+          port: 1421,
+        }
+      : undefined,
+    watch: {
+      ignored: ["**/src-tauri/**"],
+    },
+  },
+  test: {
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          environment: "jsdom",
+          include: ["src/**/*.{test,spec}.{js,ts}"],
+          exclude: ["**/node_modules/**"],
+          setupFiles: ["./src/test/setup.ts"],
+        },
+      },
+      {
+        extends: true,
+        plugins: [
+          storybookTest({ configDir: path.join(dirname, ".storybook") }),
+        ],
+        test: {
+          name: "storybook",
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({}),
+            instances: [{ browser: "chromium" }],
+          },
+        },
+      },
+    ],
+  },
+});

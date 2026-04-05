@@ -1,0 +1,51 @@
+---
+description: Shared conventions for SvelteKit frontend layout, naming, styling, tests, and Storybook
+globs: src/**/*.{svelte,ts,css}
+alwaysApply: false
+---
+
+# Frontend conventions (Tauri + SvelteKit)
+
+## Stack
+
+Svelte 5 (Runes), SvelteKit (`src/routes`), TypeScript, Tailwind v4 (`@import "tailwindcss"` in `src/app.css`), Tauri API (`@tauri-apps/api`), **[Bits UI](https://bits-ui.com/)** (`bits-ui`) for headless UI primitives. Do not use Svelte 4-style patterns (`export let`) in new code.
+
+## Generic UI primitives (Bits UI)
+
+Use **[Bits UI](https://bits-ui.com/)** (`bits-ui`) for reusable, accessible primitives: dialogs, select, dropdowns, tabs, tooltips, and similar patterns.
+
+- Prefer **Bits UI + Tailwind** instead of hand-rolled focus traps, ARIA, and keyboard handling for those cases.
+- Plain `<input>` / `<textarea>` or app-specific layout are fine when a Bits primitive does not apply or adds no benefit.
+
+## Naming and layout
+
+- Use **kebab-case** for directories and filenames (no PascalCase filenames).
+- **Reusable UI**: `src/lib/components/<kebab-name>/`.
+- **Routes**: follow SvelteKit conventions under `src/routes/`.
+
+## One component set (same directory)
+
+| File | Role |
+|------|------|
+| `index.ts` | `export { default as … } from "./….svelte"` |
+| `<name>.svelte` | Implementation |
+| `<name>.stories.ts` | Storybook (CSF) |
+| `<name>.spec.ts` | Vitest + Testing Library |
+
+Prefer exposing components via `$lib/components/<dir>`.
+
+## Style and quality
+
+- **Imports**: `simple-import-sort` (`pnpm lint:fix`).
+- **Functions**: aim for **≤ ~100 lines** (split when they grow longer).
+- **Line endings**: **LF** (per `.editorconfig`).
+- **Styling**: prefer Tailwind. Avoid huge `<style>` blocks.
+
+## Tests and Storybook
+
+- **spec**: use `vi.mock` so Tauri and similar can be swapped. Do not break Vitest resolution conditions in `vite.config.ts`.
+- **stories**: `Meta` / `StoryObj` from `@storybook/sveltekit`. When the browser has no Tauri, follow existing DEV fallbacks / mocking patterns.
+
+## For agents
+
+Change only the files needed for the request. For new UI, align with the **four-file layout** above when practical.

@@ -1,0 +1,17 @@
+---
+description: Abstract local/OS-specific Tauri (Rust) behavior behind traits
+globs: src-tauri/**/*.rs
+alwaysApply: false
+---
+
+# Tauri / Rust (desktop / OS separation)
+
+## Local and OS-specific behavior
+
+When implementing **behavior tied to local disk or the desktop environment** (file paths, shell integration, OS APIs, platform-specific behavior, etc.), follow these rules.
+
+1. **Access only through a trait (or equivalent abstraction)** — callers must not depend directly on a concrete OS implementation.
+2. **Keep per-OS / per-environment code in trait implementations** — e.g. `#[cfg(target_os = "windows")]` stays in implementation modules; commands and app layers see only the abstraction.
+3. **Tests and future swaps** — structure mocks and stubs behind the same trait.
+
+When adding new commands or services, if platform branches start spreading inside command functions, refactor toward a trait split with separate implementations.
