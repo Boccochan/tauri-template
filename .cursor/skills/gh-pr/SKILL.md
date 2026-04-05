@@ -148,15 +148,23 @@ PR 説明文に埋め込みまたはリンク。動画ファイルをリポジ�
 gh pr create --base main --title "Your title here" --body-file path/to/body.md
 ```
 
+**よく使うフラグ:** `--draft`（ドラフト PR）、`--fill`（コミットからタイトル・本文を推測）、`--web`（ブラウザで作成・確認）。
+
+**作成後:**
+
+- `gh pr view --web` で PR をブラウザで開き、本文に画像が表示されるか確認する。
+- 本文を直すときは `gh pr edit <number> --body-file body.md`（必要に応じて）。
+
 空の Screenshots で作ってしまった場合は **`gh pr edit <number> --body-file`** で必ず直す。
 
 ## Checklist (for agents)
 
 - [ ] Diff とコミット履歴を確認し、Summary がブランチ内容と一致している。
 - [ ] UI 変更: **Tauri で起動したアプリ**を **[`capture-tauri-window.ps1`](capture-tauri-window.ps1)** 等で撮り、**Before/After で「何が変わるか」が分かる**（localhost 単体のブラウザ撮影に置き換えていない）。
+- [ ] UI 変更: Before / After は **リポジトリ外**に保存し、**hosted URL（HTTPS）を PR 本文に埋め込んだ**（画像を **git にコミットしていない**）。
 - [ ] **PR の GitHub ページ上**で Before / After が表示され、並べて見て差分が説明不要なほど明瞭、または本文で不足分を補っている。
-- [ ] 画像・動画を **git にコミットしていない**。
-- [ ] `gh pr create` / `gh pr edit` 済み。
+- [ ] 挙動変更が分かりにくい場合は、短い動画を PR に埋め込みまたはリンク（動画ファイルはコミットしない）。
+- [ ] `gh pr create` / `gh pr edit` 済み。必要なら `gh pr view --web` で最終確認。
 
 ## Running this app (Tauri)
 
