@@ -1,13 +1,29 @@
 <script lang="ts">
+  import { Button } from "bits-ui";
+  import { get } from "svelte/store";
   import { _ } from "svelte-i18n";
 
   import { GreetForm } from "$lib/components/greet-form";
+
+  function showCtaFeedback() {
+    alert(get(_)("home.ctaFeedback"));
+  }
 </script>
 
 <main
   class="container mx-auto flex min-h-screen flex-col items-center justify-start bg-zinc-100 px-4 pt-10 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
 >
-  <h1 class="mb-8 text-3xl font-semibold">{$_("home.welcome")}</h1>
+  <h1 class="mb-6 text-3xl font-semibold">{$_("home.welcome")}</h1>
+
+  <div class="mb-8">
+    <Button.Root
+      type="button"
+      class="cursor-pointer rounded-lg border border-transparent bg-blue-600 px-5 py-2.5 font-medium text-white shadow-sm outline-none transition hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-500 dark:hover:bg-blue-600 dark:active:bg-blue-700"
+      onclick={showCtaFeedback}
+    >
+      {$_("home.ctaButton")}
+    </Button.Root>
+  </div>
 
   <div class="mb-8 flex flex-row flex-wrap items-center justify-center gap-4">
     <a href="https://vite.dev" target="_blank" rel="noreferrer">
