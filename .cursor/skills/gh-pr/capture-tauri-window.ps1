@@ -8,12 +8,18 @@
 
 .PARAMETER WindowTitleContains
   Substring to match against the window title (see app.windows[].title in src-tauri/tauri.conf.json).
+
+.PARAMETER ExcludeTitleContains
+  Skip windows whose title contains any of these strings (case-insensitive). Default excludes common IDEs
+  so a project folder name in the title (e.g. "... tauri-template - Cursor") does not steal the capture.
 #>
 param(
   [Parameter(Mandatory = $true)]
   [string] $OutputPath,
 
   [string] $WindowTitleContains = "tauri-template",
+
+  [string[]] $ExcludeTitleContains = @("Cursor", "Visual Studio Code", "Visual Studio", "VSCodium", "WebStorm", "idea64"),
 
   [int] $TimeoutSeconds = 120,
 
@@ -65,7 +71,7 @@ public static class NativeCapture {
 
   public const int SW_RESTORE = 9;
 
-  public static IntPtr FindWindowByTitleContains(string substr) {
+  public static IntPtr FindWindowExactTitle(string exact) {
     IntPtr found = IntPtr.Zero;
     EnumWindows((hWnd, lParam) => {
       if (!IsWindowVisible(hWnd)) return true;
@@ -74,10 +80,39 @@ public static class NativeCapture {
       var sb = new StringBuilder(len + 1);
       GetWindowText(hWnd, sb, sb.Capacity);
       string title = sb.ToString();
-      if (title.IndexOf(substr, StringComparison.OrdinalIgnoreCase) >= 0) {
+      if (string.Equals(title.Trim(), exact, StringComparison.OrdinalIgnoreCase)) {
         found = hWnd;
         return false;
       }
+      return true;
+    }, IntPtr.Zero);
+    return found;
+  }
+
+  static bool TitleHasExcludedFragment(string title, string[] excludes) {
+    if (excludes == null) return false;
+    foreach (var ex in excludes) {
+      if (string.IsNullOrEmpty(ex)) continue;
+      if (title.IndexOf(ex, StringComparison.OrdinalIgnoreCase) >= 0) return true;
+    }
+    return false;
+  }
+
+  /// <summary>First try exact title (Tauri window is usually exactly app.windows[].title). Else first visible window whose title contains substr but not IDE markers.</summary>
+  public static IntPtr FindWindowPreferExact(string substr, string[] excludeContains) {
+    IntPtr exact = FindWindowExactTitle(substr);
+    if (exact != IntPtr.Zero) return exact;
+    IntPtr found = IntPtr.Zero;
+    EnumWindows((hWnd, lParam) => {
+      if (!IsWindowVisible(hWnd)) return true;
+      int len = GetWindowTextLength(hWnd);
+      if (len == 0) return true;
+      var sb = new StringBuilder(len + 1);
+      GetWindowText(hWnd, sb, sb.Capacity);
+      string title = sb.ToString();
+      if (title.IndexOf(substr, StringComparison.OrdinalIgnoreCase) < 0) return true;
+      if (TitleHasExcludedFragment(title, excludeContains)) return true;
+      if (found == IntPtr.Zero) found = hWnd;
       return true;
     }, IntPtr.Zero);
     return found;
@@ -117,13 +152,13 @@ $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
 $hwnd = [IntPtr]::Zero
 
 while ((Get-Date) -lt $deadline) {
-  $hwnd = [NativeCapture]::FindWindowByTitleContains($WindowTitleContains)
+  $hwnd = [NativeCapture]::FindWindowPreferExact($WindowTitleContains, $ExcludeTitleContains)
   if ($hwnd -ne [IntPtr]::Zero) { break }
   Start-Sleep -Milliseconds $PollIntervalMs
 }
 
 if ($hwnd -eq [IntPtr]::Zero) {
-  Write-Error "No visible window with title containing '$WindowTitleContains' within ${TimeoutSeconds}s. Is 'pnpm tauri dev' running?"
+  Write-Error "No visible window matching '$WindowTitleContains' (excluding: $($ExcludeTitleContains -join ', ')) within ${TimeoutSeconds}s. Bring the Tauri window to the foreground — not Cursor/VS Code."
 }
 
 [NativeCapture]::SaveWindowPng($hwnd, $OutputPath)

@@ -30,7 +30,7 @@ description: >-
 | 変更箇所（追加したボタン・文言・レイアウトなど）が **フレーム内で判読できる** 大きさ・位置になるよう、ウィンドウサイズやスクロールを揃える | 変更が写っていない・どこが変わったか一目で分からない汎用の「画面全体だけ」 |
 | 操作後の見た目が変更の本質なら、After は **クリック後などの状態** で撮る（必要なら `gh-pr-after-interaction.png` を追加し、本文で「操作後」と説明） | ローカルに PNG を置いただけで PR 本文を更新しない |
 
-**[`capture-tauri-window.ps1`](capture-tauri-window.ps1)** は、タイトルで **Tauri のトップレベルウィンドウ**を探してその矩形を撮る。だから「アプリの見た目」そのものが保存される（Playwright の別ブラウザではない）。
+**[`capture-tauri-window.ps1`](capture-tauri-window.ps1)** は、タイトルで **Tauri のトップレベルウィンドウ**を探してその矩形を撮る。プロジェクト名がタイトルに含まれる **Cursor / VS Code などの IDE ウィンドウを除外**する（さもないと `… tauri-template - Cursor` が先にマッチしてしまう）。`app.windows[].title` と一致する短いタイトル（例: `tauri-template`）を優先する。
 
 ## Prerequisites
 
