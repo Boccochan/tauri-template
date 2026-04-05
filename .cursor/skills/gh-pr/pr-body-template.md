@@ -28,13 +28,17 @@
 
 ## Screenshots
 
-<!-- Required for UI changes: embed Before / After in THIS file using Markdown images with HTTPS URLs BEFORE gh pr create. Do not commit image binaries to the repo. -->
+<!-- UI 変更: `pnpm tauri dev` で起動した Tauri アプリのウィンドウを撮る（localhost をブラウザだけ開いて撮らない）。Before = ベースブランチ、After = このブランチ。並べて「何が変わるか」が分かるようにスクロール・サイズを揃える。HTTPS の Markdown 画像で本文に埋め込む。PNG は git にコミットしない。 -->
 
 ### Before
+
+`main`（などベース）で起動したときの画面。
 
 ![Before](REPLACE_WITH_HTTPS_URL_TO_BEFORE_PNG)
 
 ### After
+
+このブランチで起動したときの画面（変更箇所が判読できること）。
 
 ![After](REPLACE_WITH_HTTPS_URL_TO_AFTER_PNG)
 

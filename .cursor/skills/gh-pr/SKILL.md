@@ -20,6 +20,18 @@ description: >-
 - **禁止:** リポジトリへ PNG/動画をコミットすること。
 - **許可:** gist の `raw_url`、ドラフト Release の `browser_download_url`、手動で GitHub に貼り付けたアップロード URL など、**HTTPS で画像として取得できる URL** ならよい。
 
+## スクショで示すもの（Tauri アプリの「変更点」）
+
+目的は **デスクトップやブラウザのスクショではなく**、`pnpm tauri dev` で立ち上げた **Tauri アプリのウィンドウ**のうち、**この PR で変わる UI がレビューアに伝わる**こと。
+
+| やること | やらないこと |
+|----------|----------------|
+| **ベースブランチ**で起動したアプリの見た目（Before）と **PR ブランチ**で起動したアプリの見た目（After）を並べ、差分が分かるようにする | ブラウザで `http://localhost:1420` だけ開いて撮る（Tauri のネイティブ枠・WebView2 の実表示と一致しない） |
+| 変更箇所（追加したボタン・文言・レイアウトなど）が **フレーム内で判読できる** 大きさ・位置になるよう、ウィンドウサイズやスクロールを揃える | 変更が写っていない・どこが変わったか一目で分からない汎用の「画面全体だけ」 |
+| 操作後の見た目が変更の本質なら、After は **クリック後などの状態** で撮る（必要なら `gh-pr-after-interaction.png` を追加し、本文で「操作後」と説明） | ローカルに PNG を置いただけで PR 本文を更新しない |
+
+**[`capture-tauri-window.ps1`](capture-tauri-window.ps1)** は、タイトルで **Tauri のトップレベルウィンドウ**を探してその矩形を撮る。だから「アプリの見た目」そのものが保存される（Playwright の別ブラウザではない）。
+
 ## Prerequisites
 
 - `gh` is installed and `gh auth login` has been completed.
@@ -63,7 +75,7 @@ Playwright の `localhost` は Tauri ウィンドウではない。**[`capture-t
 
 1. **出力先（リポジトリ外）:** 例 `%TEMP%\gh-pr-captures`。作成してよい。PNG は **`git add` しない**。
 
-2. **Before（ベースブランチ）:** `<base>`（例 `main`）をチェックアウトできるワークツリーで `pnpm tauri dev` を起動し、ウィンドウが出るまで待つ。
+2. **Before（ベースブランチ）:** `<base>`（例 `main`）をチェックアウトできるワークツリーで `pnpm tauri dev` を起動し、ウィンドウが出るまで待つ。**変更が出るエリアが見える状態**（スクロール・ウィンドウサイズ）にしてから撮る。
 
 3. **キャプチャ**（`app.windows[].title` に合わせて `-WindowTitleContains` を調整）:
 
@@ -75,7 +87,7 @@ Playwright の `localhost` は Tauri ウィンドウではない。**[`capture-t
 
 4. **`pnpm tauri dev` を止め**、ポートを空ける。
 
-5. **After（PR ブランチ）:** ブランチを切り替え、再度 `pnpm tauri dev` → 同様に `gh-pr-after.png` を保存。
+5. **After（PR ブランチ）:** ブランチを切り替え、再度 `pnpm tauri dev` → **Before と同じくらいの見え方**（サイズ・スクロール）に揃え、`gh-pr-after.png` を保存。**新 UI がはっきり分かる**こと。操作が変更の要点なら、操作後の画面で撮る。
 
 6. **HTTPS URL を取得**（gist または下記フォールバック）。**まだ PR を作らない。**
 
@@ -141,8 +153,8 @@ gh pr create --base main --title "Your title here" --body-file path/to/body.md
 ## Checklist (for agents)
 
 - [ ] Diff とコミット履歴を確認し、Summary がブランチ内容と一致している。
-- [ ] UI 変更: **実機 Tauri ウィンドウ**をキャプチャした（Windows は **[`capture-tauri-window.ps1`](capture-tauri-window.ps1)** 等）。
-- [ ] **PR の GitHub ページ上**で Before / After 画像が表示される（本文に `![]()` が入っている）。プレースホルダー・未埋めではない。
+- [ ] UI 変更: **Tauri で起動したアプリ**を **[`capture-tauri-window.ps1`](capture-tauri-window.ps1)** 等で撮り、**Before/After で「何が変わるか」が分かる**（localhost 単体のブラウザ撮影に置き換えていない）。
+- [ ] **PR の GitHub ページ上**で Before / After が表示され、並べて見て差分が説明不要なほど明瞭、または本文で不足分を補っている。
 - [ ] 画像・動画を **git にコミットしていない**。
 - [ ] `gh pr create` / `gh pr edit` 済み。
 
